@@ -5,10 +5,10 @@ if [[ -f $FILE ]];then
 
 echo "[Global]" > $FILE
 echo "netbios name = $(hostname)" >> $FILE
-echo "cat /opt/pionux/westline-client/Client/version_0.1/samba/smb.conf" >> $FILE
+cat /opt/pionux/westline-client/version_0.1/samba/smb.conf >> $FILE
 else
   sudo touch $FILE
   echo "[Global]" > $FILE
   echo "netbios name = $(hostname)" >> $FILE
-  echo "cat /opt/pionux/westline-client/Client/version_0.1/samba/smb.conf" >> $FILE
+  cat /opt/pionux/westline-client/version_0.1/samba/smb.conf >> $FILE
 fi

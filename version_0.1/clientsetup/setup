@@ -1,8 +1,17 @@
 #!/bin/bash
 
 sudo cp /opt/pionux/westline-client/version_0.1/krb5/krb5.conf /etc/krb5.conf
-sudo ./opt/pionux/westline-client/version_0.1/samba/smb
+sudo /opt/pionux/westline-client/version_0.1/samba/smb
 
 read -p "IP Address server: " IPADDRESSSERVER
 
-echo "$IPADDRESSSERVER  school.westline.lan     WESTLINE"
+sudo echo "$IPADDRESSSERVER  school.westline.lan     WESTLINE" >> /etc/hosts
+
+sudo systemctl stop smb nmb winbind mysmb
+net rpc join -S school.westline.lan -U Administrators
+sudo systemctl enable smb nmb winbind mysmb
+sudo systemctl start smb nmb winbind mysmb
+
+shc -v -r -f /opt/pionux/westline/westline-client/version_0.1/scripts/client.sh
+sudu rm -rf /opt/pionux/westline/westline-client/version_0.1/scripts/client.sh.x.c
+sudo mv /opt/pionux/westline/westline-client/version_0.1/scripts/client.sh.x /usr/bin/client

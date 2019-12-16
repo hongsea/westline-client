@@ -1,7 +1,7 @@
 #!/bin/bash
 ipcrm -a
 username=$(id -u -n)
-if [[ $username == "ATS" ]];then 
+if [[ $username == "WESTLINE" ]];then 
     yad --center --width=280 --height=100 \
     --text="<span foreground='#ffffff'><b><big>Your are not user domain.</big></b></span>" \
     --window-icon="/usr/share/pixmaps/pionuxicon.png" --image="gtk-dialog-warning" \
@@ -11,8 +11,8 @@ if [[ $username == "ATS" ]];then
 	 exit;
 	fi 
 else 
-mount=$(df -h | grep ATS | awk -F' ' '{ if (NR==1) print $1}')
-if [[ "$mount" ==  "//ATS/$username" ]]; then
+mount=$(df -h | grep WESTLINE | awk -F' ' '{ if (NR==1) print $1}')
+if [[ "$mount" ==  "//WESTLINE/$username" ]]; then
 function main1(){
 status=Connected
 username=$(id -u -n)
@@ -24,7 +24,7 @@ action=$(yad --plug=1234601 --tabnum=1 \
 --text="
 <span foreground='#7300e6'><b><big><big>$username</big></big></b></span>
 " \
---field="Open your Data":fbtn "dolphin --select /home/ATS/$username/$username/" \
+--field="Open your Data":fbtn "dolphin --select /home/WESTLINE/$username/$username/" \
 --field="
 STATUS : <span foreground='green'><b><big><big>$status</big></big></b></span>
 ":LBL &\
@@ -127,12 +127,12 @@ mkdir $HOME/share$group > /dev/null 2>&1
 rm -rf $HOME/Videos
 rm -rf $HOME/Pictures
 rm -rf $HOME/Musics
-echo $passwd | sudo -S mount -t cifs //ATS/$username $HOME/$username/ -o username=$username,password=$passwd,workgroup=ATS,iocharset=utf8,uid=$userid,gid=users,vers=3.1.1,nodfs --verbose
-echo $passwd | sudo -S mount -t cifs //ATS/share$group $HOME/share$group/ -o username=$username,password=$passwd,workgroup=ATS,iocharset=utf8,uid=$userid,gid=$group,vers=3.1.1,nodfs --verbose
-mount=$(df -h | grep ATS | awk -F' ' '{ if (NR==1) print $1}')
-mountshare=$(df -h | grep ATS | awk -F' ' '{ if (NR==2) print $1}')
-mount1="//ATS/$username"
-mount2="//ATS/share$group"
+echo $passwd | sudo -S mount -t cifs //WESTLINE/$username $HOME/$username/ -o username=$username,password=$passwd,workgroup=WESTLINE,iocharset=utf8,uid=$userid,gid=users,vers=3.1.1,nodfs --verbose
+echo $passwd | sudo -S mount -t cifs //WESTLINE/share$group $HOME/share$group/ -o username=$username,password=$passwd,workgroup=WESTLINE,iocharset=utf8,uid=$userid,gid=$group,vers=3.1.1,nodfs --verbose
+mount=$(df -h | grep WESTLINE | awk -F' ' '{ if (NR==1) print $1}')
+mountshare=$(df -h | grep WESTLINE | awk -F' ' '{ if (NR==2) print $1}')
+mount1="//WESTLINE/$username"
+mount2="//WESTLINE/share$group"
 	if [[ "$mountshare" != "$mount2" ]];then
 	    yad --center --width=260 --height=100 \
 	    --text="<span foreground='#00ff00'><b><big>Share group fail.</big></b></span>" \
@@ -147,7 +147,7 @@ mount2="//ATS/share$group"
 	    --title="Connected" \
 	    --button=OK:0
     		if [[ $? == 0 ]]; then
-		dolphin --select /home/ATS/$username/$username/
+		dolphin --select /home/WESTLINE/$username/$username/
 		fi
 	else 
 	    yad --center --width=260 --height=100 \
@@ -176,6 +176,6 @@ fi # end of on click ok
 }
 main
 fi # end of find mount
-fi # end of compare userATS
+fi # end of compare userWESTLINE
 #--image="/usr/share/pixmaps/pionuxlable.png" \
 #update
