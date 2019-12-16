@@ -8,7 +8,7 @@ read -p "IP Address server: " IPADDRESSSERVER
 sudo echo "$IPADDRESSSERVER  school.westline.lan     WESTLINE" >> /etc/hosts
 
 sudo systemctl stop smb nmb winbind mysmb
-net rpc join -S school.westline.lan -U Administrators
+sudo net rpc join -S school.westline.lan -U Administrator
 sudo systemctl enable smb nmb winbind mysmb
 sudo systemctl start smb nmb winbind mysmb
 
