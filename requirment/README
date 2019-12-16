@@ -1,0 +1,28 @@
+1. Download service 
+sudo pacman -S samba 
+sudo pacman -S pam-krb5 
+sudo pacman -S ntp
+sudo pacman -S gnome-terminal
+sudo pacman -S yad
+sudo pacman -S appmenu-gtk-module
+
+2. service
+    + copy service "mysmb.service" to /usr/lib/systemd/system/
+
+3. scirtp and
+    + copy  "client.sh", "mysmb.sh" "Frmchpwd.sh" "Appdisable.sh"to /usr/bin/
+
+4. icon,lable
+    + copy "pionuxicon.png" pionuxlable.png" to /usr/share/pixmaps/
+
+4. Configuration 
+    + copy "smb.conf" to /etc/samba/
+    + copy "krb5.conf" "nsswitch.conf" to /etc/
+    + copy "system-auth", "system-login" and "passwd" to /etc/pam.d/
+    + copy "pam_winbind.conf" to /etc/security/
+
+5. Desktop Icon
+    + copy "Mount.desktop" to /usr/share/applications/
+
+ 
+

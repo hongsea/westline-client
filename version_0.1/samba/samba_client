@@ -1,0 +1,181 @@
+============== Installation ==============
+$ sudo pacman -S samba
+$ sudo pacman -S pam-krb5
+$ sudo pacman -S ntp
+$ sudo pacman -S gnome-terminal
+
+============== Hosts ==============
+#add to /etc/hosts 
+192.168.1.110    pionux.koompi.local KOOMPI  
+
+============== Kerberos ==============
+$ sudo nano /etc/krb5.conf 
+    
+[libdefaults]
+    default_realm 	= 	PIONUX.KOOMPI.LOCAL 
+	clockskew 	= 	300
+	ticket_lifetime	=	1d
+    forwardable     =       true
+    proxiable       =       true
+    dns_lookup_realm =      true
+    dns_lookup_kdc  =       true
+    allow_weak_crypto =     true
+[realms]
+	PIONUX.KOOMPI.LOCAL = {
+		kdc 	= 	PIONUX.KOOMPI.LOCAL
+        admin_server = PIONUX.KOOMPI.LOCAL
+		default_domain = PIONUX.KOOMPI.LOCAL
+	}
+[domain_realm]
+    .kerberos.server = PIONUX.KOOMPI.LOCAL
+	.pionux.koompi.local = PIONUX.KOOMPI.LOCAL
+	pionux.koompi.local = PIONUX.KOOMPI.LOCAL
+[appdefaults]
+	pam = {
+	ticket_lifetime 	= 1d
+	renew_lifetime 		= 1d
+	forwardable 		= true
+	proxiable 		= false
+	retain_after_close 	= false
+	minimum_uid 		= 0
+	debug 			= false
+	}
+[logging]
+	default 		= FILE:/var/log/krb5libs.log
+	kdc 			= FILE:/var/log/kdc.log
+    admin_server            = FILE:/var/log/kadmind.log
+#save
+
++ Creating a Kerberos ticket
+    $ kinit administrator@PIONUX.KOOMPI.LOCAL
+    $ klist 
+    
++ pam_winbind.conf
+$ sudo nano /etc/security/pam_winbind.conf
+[global]
+    debug = no
+    debug_state = no
+    try_first_pass = yes
+    krb5_auth = yes
+    krb5_ccache_type = FILE
+    cached_login = yes
+    silent = no
+    mkhomedir = yes
+
+============== Samba ==============
+$ sudo nano /etc/samba/smb.conf
+[Global]
+    netbios name = MYARCHLINUX
+    workgroup = KOOMPI
+    realm =  PIONUX.KOOMPI.LOCAL
+    server string = %h ArchLinux Host
+    security = ads
+    encrypt passwords = yes
+    password server = pionux.koompi.local
+    client signing = auto
+    server signing = auto
+
+    idmap config * : backend = tdb
+    idmap config * : range = 10000-20000
+
+    winbind use default domain = Yes
+    winbind enum users = Yes
+    winbind enum groups = Yes
+    winbind nested groups = Yes
+    winbind separator = +
+    winbind refresh tickets = yes
+    winbind offline logon = yes
+    winbind cache time = 300
+
+    template shell = /bin/bash
+    template homedir = /home/%D/%U
+        
+    preferred master = no
+    dns proxy = no
+    wins server = pionux.koompi.local 
+    wins proxy = no
+
+    inherit acls = Yes
+    map acl inherit = Yes
+    acl group control = yes
+
+    load printers = no
+    debug level = 3
+    use sendfile = no
+#save 
+
++ Join the domain
+# net join ads -U Administrator    
+
++ Stating and testing service 
+# systemctl enable smb nmb winbind 
+# systemctl start smb nmb winbind 
+
+    
++  Modify the NSSwitch configuration
+$ sudo nano /etc/nsswitch.conf
+passwd:            files winbind
+shadow:            files winbind
+group:             files winbind 
+ 
+hosts:             files dns wins 
+
++ Testing winbind 
+$ wbinfo -u 
+$ wbinfo -g 
+
++ Testing Samba commands
+$ sudo net ads info 
+$ sudo net ads lookup 
+$ net ads status -U administrator%password | less
+
+============== Configuring PAM ==============
+
++ system-auth
+$ sudo nano /etc/pam.d/system-auth 
+#%PAM-1.0
+auth    [success=1 default=ignore]      pam_localuser.so
+auth    [success=2 default=die]         pam_winbind.so
+auth    [success=1 default=die]         pam_unix.so nullok
+auth    requisite                       pam_deny.so
+#auth      required  pam_unix.so     try_first_pass nullok
+auth      optional  pam_permit.so
+auth      required  pam_env.so
+
+account   [success=1 default=ignore] pam_localuser.so
+account   required pam_winbind.so
+account   required  pam_unix.so
+account   optional  pam_permit.so
+account   required  pam_time.so
+
+password        [success=1 default=ignore]      pam_localuser.so
+password        [success=2 default=die]         pam_winbind.so
+password        [success=1 default=did]         pam_unix.so sha512 shadow
+password        requisite                       pam_deny.so
+#password  required  pam_unix.so     try_first_pass nullok sha512 shadow
+password  optional  pam_permit.so
+
+session  required  pam_mkhomedir.so  skel=/etc/skel/  umask=0022
+session   required  pam_limits.so
+session   required  pam_unix.so
+session   optional  pam_permit.so
+
+session  [success=1  default=ignore]  pam_localuser.so
+session  required  pam_winbind.so
+
++passwd
+$ sudo nano /etc/pam.d/passwd 
+%PAM-1.0
+#password       required        pam_cracklib.so difok=2 minlen=8 dcredit=2 ocredit=2 retry=3
+#password       required        pam_unix.so sha512 shadow use_authtok
+#password       required        pam_unix.so sha512 shadow nullok
+password        include         system-auth
+
++system-login 
+#add this line to /etc/pam.d/system-login 
+session    required   pam_mkhomedir.so skel=/etc/skel umask=0022
+
+wget -qO - https://matrix.org/packages/debian/repo-key.asc | sudo apt-key add -
+sudo add-apt-repository https://matrix.org/packages/debian/
+
+#check proble with time NTP

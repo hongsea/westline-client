@@ -1,0 +1,10 @@
+join domain on client
+
+configure on host
+configure on resolve
+command
+	net rpc getid -S pionux.koompi.local
+	
+start service winbind
+command 
+	net join ads -U Administrator

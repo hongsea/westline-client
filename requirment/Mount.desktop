@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Login
+Comment=Applicaton for scirpt
+Exec=/usr/bin/client
+Icon=/usr/share/pixmaps/pionuxicon.png
+Type=Application
+Categories=Work
+OnlyShowIn=Unity
