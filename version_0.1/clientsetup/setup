@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sudo cp /opt/pionux/westline-client/Client/version_0.1/krb5/krb5.conf /etc/krb5.conf
-sudo ./opt/pionux/westline-client/Client/version_0.1/samba/smb
+sudo cp /opt/pionux/westline-client/version_0.1/krb5/krb5.conf /etc/krb5.conf
+sudo ./opt/pionux/westline-client/version_0.1/samba/smb
 
 read -p "IP Address server: " IPADDRESSSERVER
 
