@@ -13,5 +13,5 @@ sudo systemctl enable smb nmb winbind mysmb
 sudo systemctl start smb nmb winbind mysmb
 
 shc -v -r -f /opt/pionux/westline-client/version_0.1/scripts/client.sh
-sudu rm -rf /opt/pionux/westline-client/version_0.1/scripts/client.sh.x.c
+sudo rm -rf /opt/pionux/westline-client/version_0.1/scripts/client.sh.x.c
 sudo mv /opt/pionux/westline-client/version_0.1/scripts/client.sh.x /usr/bin/client
